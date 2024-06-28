@@ -8635,15 +8635,15 @@ server <- function(input, output, session){
     porteros <- porteros$name
     
     output$portero_control_rival <- renderUI({
-      selectInput("portero_control", "Area Control from:", choices = porteros, multiple = F, selected = porteros[1])
+      selectInput("portero_control_rival", "Area Control from:", choices = porteros, multiple = F, selected = porteros[1])
     })
     
-    observeEvent(input$portero_control, {
+    observeEvent(input$portero_control_rival, {
       
       output$porccontrol_por_rival <- renderUI({
         
         ## porcentaje
-        partidos_por <- datos_ft %>% group_by(partido) %>% summarise(esta_portero = input$portero_control %in% name) %>% filter(esta_portero)
+        partidos_por <- datos_ft %>% group_by(partido) %>% summarise(esta_portero = input$portero_control_rival %in% name) %>% filter(esta_portero)
         partidos_por <- partidos_por$partido
         
         
@@ -8653,13 +8653,13 @@ server <- function(input, output, session){
         posesiones_portero_full <- datos_ft %>% mutate(sig_actor = lead(name), sig_accion = lead(type.displayName)) %>% group_by(partido, posesion) %>% mutate(par_pos2 = paste(partido, posesion, sep = ", ")) %>% filter(par_pos2 %in% abp_portero$par_pos)
         
         
-        intervenciones <- posesiones_portero_full %>% group_by(partido, posesion) %>% summarise(accion_portero = ifelse(input$portero_control %in% sig_actor, T, F))
+        intervenciones <- posesiones_portero_full %>% group_by(partido, posesion) %>% summarise(accion_portero = ifelse(input$portero_control_rival %in% sig_actor, T, F))
         
         porc_acciones <- round(sum(intervenciones$accion_portero)/nrow(intervenciones)*100, 2)
         ###
         
         ### html
-        nombre_tio <- input$portero_control
+        nombre_tio <- input$portero_control_rival
         
         foto_url <- jugadores %>% filter(name == nombre_tio, team == equipin_rival) %>% select(foto) %>% pull()
         
